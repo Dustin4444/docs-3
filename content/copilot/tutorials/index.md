@@ -8,7 +8,6 @@ children:
   - /copilot-cookbook
   - /customization-library
   - /cloud-agent
-  - /budgets
   - /spark
   - /customize-code-review
   - /enhance-agent-mode-with-mcp
@@ -20,7 +19,6 @@ children:
   - /explore-pull-requests
   - /write-tests
   - /refactor-code
-  - /optimize-ai-usage
   - /optimize-code-reviews
   - /reduce-technical-debt
   - /review-ai-generated-code

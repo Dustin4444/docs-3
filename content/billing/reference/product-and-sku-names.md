@@ -82,9 +82,10 @@ For **SkuPricing** budgets or to query usage by SKU, use one of the following va
 
 ### {% data variables.product.prodname_copilot %} SKUs
 
-* `copilot_ai_credits` - Copilot {% data variables.product.prodname_ai_credits_short %}
+* `copilot_agent_premium_request` - Copilot agent premium request
 * `copilot_enterprise` - Copilot Enterprise
 * `copilot_for_business` - Copilot for Business
+* `copilot_premium_request` - Copilot premium request
 * `copilot_standalone` - Copilot standalone
 
 ### {% data variables.product.prodname_GH_advanced_security %} SKUs
@@ -101,7 +102,7 @@ For **SkuPricing** budgets or to query usage by SKU, use one of the following va
 * `models_inference` - Models inference
 * `packages_bandwidth` - Packages bandwidth
 * `packages_storage` - Packages storage
-* `spark_ai_credits` - Spark {% data variables.product.prodname_ai_credits_short %}
+* `spark_premium_request` - Spark premium request
 
 > [!NOTE]
 > The exact SKUs available may vary depending on your enterprise or organization configuration and the features enabled. If you receive a `404` error when creating a budget through the REST API, look at the error response to see the current list of valid SKUs for your account.

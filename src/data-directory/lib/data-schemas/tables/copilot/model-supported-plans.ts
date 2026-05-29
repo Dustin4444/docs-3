@@ -10,19 +10,22 @@ const modelSupportedPlansSchema = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['name', 'pro', 'pro_plus', 'max', 'business', 'enterprise'],
+        required: ['name', 'free', 'student', 'pro', 'pro_plus', 'business', 'enterprise'],
         properties: {
           name: {
             type: 'string',
             lintable: true,
           },
+          free: {
+            type: 'boolean',
+          },
+          student: {
+            type: 'boolean',
+          },
           pro: {
             type: 'boolean',
           },
           pro_plus: {
-            type: 'boolean',
-          },
-          max: {
             type: 'boolean',
           },
           business: {
