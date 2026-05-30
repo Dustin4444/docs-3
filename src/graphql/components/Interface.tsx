@@ -1,5 +1,5 @@
 import { Link } from '@/frame/components/Link'
-import { GraphqlItem, headingTag } from './GraphqlItem'
+import { GraphqlItem } from './GraphqlItem'
 import { Table } from './Table'
 import { useTranslation } from '@/languages/components/useTranslation'
 import type { ObjectT, InterfaceT } from './types'
@@ -7,14 +7,12 @@ import type { ObjectT, InterfaceT } from './types'
 type Props = {
   item: InterfaceT
   objects: ObjectT[]
-  headingLevel?: number
 }
 
-export function Interface({ item, objects, headingLevel = 2 }: Props) {
+export function Interface({ item, objects }: Props) {
   const { t } = useTranslation('graphql')
   const heading = t('reference.implemented_by').replace('{{ GraphQLItemTitle }}', item.name)
   const heading2 = t('reference.fields').replace('{{ GraphQLItemTitle }}', item.name)
-  const SubHeading = headingTag(headingLevel + 1)
 
   const implementedBy = objects.filter(
     (object) =>
@@ -23,7 +21,7 @@ export function Interface({ item, objects, headingLevel = 2 }: Props) {
   )
 
   return (
-    <GraphqlItem item={item} heading={heading} headingLevel={headingLevel} kind="interfaces">
+    <GraphqlItem item={item} heading={heading}>
       <ul>
         {implementedBy.map((object) => (
           <li key={`${item.id}-${item.name}-${object.href}-${object.name}`}>
@@ -37,7 +35,7 @@ export function Interface({ item, objects, headingLevel = 2 }: Props) {
       </ul>
       {item.fields && (
         <>
-          <SubHeading
+          <h4
             dangerouslySetInnerHTML={{
               __html: heading2,
             }}

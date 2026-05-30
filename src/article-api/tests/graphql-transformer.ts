@@ -27,25 +27,30 @@ describe('GraphQL transformer', { timeout: 10000 }, () => {
   })
 
   describe('Reference pages', () => {
-    test('repos category page renders with markdown structure', async () => {
-      const res = await getCached('/en/graphql/reference/repos')
+    test('queries page renders with markdown structure', async () => {
+      const res = await getCached('/en/graphql/reference/queries')
       expect(res.statusCode).toBe(200)
       expect(res.headers['content-type']).toContain('text/markdown')
 
       // Check for the main heading
-      expect(res.body).toContain('# Repositories')
+      expect(res.body).toContain('# Queries')
 
-      // Items render as flat alphabetical level 2 headings with a kind suffix
-      expect(res.body).toContain('## createRepository - mutation')
-      expect(res.body).toContain('## repository - query')
+      // Check for intro
+      expect(res.body).toContain(
+        'The query type defines GraphQL operations that retrieve data from the server.',
+      )
+
+      // Check for manual content section
+      expect(res.body).toContain('## About queries')
+      expect(res.body).toContain('Every GraphQL schema has a root type')
     })
 
-    test('queries are formatted correctly on a category page', async () => {
-      const res = await getCached('/en/graphql/reference/repos')
+    test('queries are formatted correctly', async () => {
+      const res = await getCached('/en/graphql/reference/queries')
       expect(res.statusCode).toBe(200)
 
-      // Item headings are now at level 3
-      expect(res.body).toContain('## repository - query')
+      // Check for query heading
+      expect(res.body).toContain('## repository')
 
       // Check for query description
       expect(res.body).toContain('Lookup a given repository by the owner and repository name.')
@@ -55,10 +60,10 @@ describe('GraphQL transformer', { timeout: 10000 }, () => {
     })
 
     test('query arguments are listed in bullet format', async () => {
-      const res = await getCached('/en/graphql/reference/meta')
+      const res = await getCached('/en/graphql/reference/queries')
       expect(res.statusCode).toBe(200)
 
-      // codeOfConduct query is in the meta category
+      // Check for arguments section for codeOfConduct query
       expect(res.body).toContain('### Arguments for `codeOfConduct`')
 
       // Check for specific arguments in bullet format
@@ -67,26 +72,36 @@ describe('GraphQL transformer', { timeout: 10000 }, () => {
     })
 
     test('mutations page renders correctly', async () => {
-      const res = await getCached('/en/graphql/reference/repos')
+      const res = await getCached('/en/graphql/reference/mutations')
       expect(res.statusCode).toBe(200)
 
-      // Mutation heading (level 3) and surrounding sections (level 4)
-      expect(res.body).toContain('## createRepository - mutation')
+      // Check for mutation heading
+      expect(res.body).toContain('## createRepository')
+
+      // Check for mutation description
       expect(res.body).toContain('Create a new repository.')
+
+      // Check for input fields in bullet format
       expect(res.body).toContain('### Input fields for `createRepository`')
       expect(res.body).toContain('`input`')
+
+      // Check for return fields in bullet format
       expect(res.body).toContain('### Return fields for `createRepository`')
       expect(res.body).toContain('`repository`')
       expect(res.body).toContain('The new repository.')
     })
 
     test('objects page renders with implements and fields', async () => {
-      const res = await getCached('/en/graphql/reference/pulls')
+      const res = await getCached('/en/graphql/reference/objects')
       expect(res.statusCode).toBe(200)
 
-      // AddedToMergeQueueEvent is in the pulls category and implements Node
-      expect(res.body).toContain('## AddedToMergeQueueEvent - object')
+      // Check for object heading - AddedToMergeQueueEvent has implements
+      expect(res.body).toContain('## AddedToMergeQueueEvent')
+
+      // Check for implements inline
       expect(res.body).toContain('**Implements:** Node')
+
+      // Check for fields in bullet format
       expect(res.body).toContain('### Fields for `AddedToMergeQueueEvent`')
       expect(res.body).toContain('`id`')
       expect(res.body).toContain('`actor`')
@@ -94,11 +109,11 @@ describe('GraphQL transformer', { timeout: 10000 }, () => {
     })
 
     test('objects page shows field arguments as nested bullets', async () => {
-      const res = await getCached('/en/graphql/reference/users')
+      const res = await getCached('/en/graphql/reference/objects')
       expect(res.statusCode).toBe(200)
 
-      // User object lives in the users category
-      expect(res.body).toContain('## User - object')
+      // Check for User object with repositories field that has arguments
+      expect(res.body).toContain('## User')
       expect(res.body).toContain('`repositories`')
 
       // Check for nested argument bullets
@@ -107,24 +122,47 @@ describe('GraphQL transformer', { timeout: 10000 }, () => {
       expect(res.body).toContain('`orderBy`')
     })
 
-    test('interfaces page renders correctly', async () => {
-      const res = await getCached('/en/graphql/reference/meta')
+    test('objects page collapses boilerplate Connection and Edge types', async () => {
+      const res = await getCached('/en/graphql/reference/objects')
       expect(res.statusCode).toBe(200)
 
-      expect(res.body).toContain('## Node - interface')
+      // Check for Connection/Edge summary section
+      expect(res.body).toContain('## Connection and Edge types')
+      expect(res.body).toContain('standard pagination fields')
+
+      // Boilerplate Connection/Edge types should be in the summary, not as H2 sections
+      // ActorConnection has only standard fields (edges, nodes, pageInfo, totalCount)
+      expect(res.body).toContain('`ActorConnection`')
+      expect(res.body).not.toMatch(/^## ActorConnection$/m)
+    })
+
+    test('interfaces page renders correctly', async () => {
+      const res = await getCached('/en/graphql/reference/interfaces')
+      expect(res.statusCode).toBe(200)
+
+      // Check for interface heading
+      expect(res.body).toContain('## Node')
+
+      // Check for interface description
       expect(res.body).toContain('An object with an ID.')
+
+      // Check for fields in bullet format
       expect(res.body).toContain('### Fields for `Node`')
       expect(res.body).toContain('`id`')
       expect(res.body).toContain('ID of the object.')
     })
 
     test('enums page renders with values', async () => {
-      const res = await getCached('/en/graphql/reference/repos')
+      const res = await getCached('/en/graphql/reference/enums')
       expect(res.statusCode).toBe(200)
 
-      // RepositoryVisibility is in the repos category
-      expect(res.body).toContain('## RepositoryVisibility - enum')
+      // Check for enum heading
+      expect(res.body).toContain('## RepositoryVisibility')
+
+      // Check for enum description
       expect(res.body).toContain("The repository's visibility level.")
+
+      // Check for values in bullet format
       expect(res.body).toContain('### Values for `RepositoryVisibility`')
       expect(res.body).toContain('`PUBLIC`')
       expect(res.body).toContain('The repository is visible to everyone.')
@@ -134,38 +172,52 @@ describe('GraphQL transformer', { timeout: 10000 }, () => {
     })
 
     test('unions page renders with possible types', async () => {
-      const res = await getCached('/en/graphql/reference/branches')
+      const res = await getCached('/en/graphql/reference/unions')
       expect(res.statusCode).toBe(200)
 
-      expect(res.body).toContain('## BranchActorAllowanceActor - union')
-      expect(res.body).toContain('Types which can be actors for')
-      expect(res.body).toContain('### Possible types for `BranchActorAllowanceActor`')
-      expect(res.body).toMatch(/\*\s*App/)
-      expect(res.body).toMatch(/\*\s*Team/)
+      // Check for union heading
+      expect(res.body).toContain('## SearchResultItem')
+
+      // Check for union description
+      expect(res.body).toContain('The results of a search.')
+
+      // Check for possible types in bullet format (without links)
+      expect(res.body).toContain('### Possible types for `SearchResultItem`')
+      expect(res.body).toMatch(/\*\s*Bot/)
+      expect(res.body).toMatch(/\*\s*PullRequest/)
       expect(res.body).toMatch(/\*\s*User/)
     })
 
     test('input-objects page renders correctly', async () => {
-      const res = await getCached('/en/graphql/reference/migrations')
+      const res = await getCached('/en/graphql/reference/input-objects')
       expect(res.statusCode).toBe(200)
 
-      expect(res.body).toContain('## AbortQueuedMigrationsInput - input object')
-      expect(res.body).toContain('Autogenerated input type of AbortQueuedMigrations.')
+      // Check for input object heading
+      expect(res.body).toContain('## AbortQueuedMigrationsInput')
+
+      // Check for input object description
+      expect(res.body).toContain('Autogenerated input type of CreateRepository.')
+
+      // Check for input fields in bullet format
       expect(res.body).toContain('### Input fields for `AbortQueuedMigrationsInput`')
       expect(res.body).toContain('`ownerId`')
       expect(res.body).toContain('The ID of the organization that is running the migrations.')
     })
 
     test('scalars page renders correctly', async () => {
-      const res = await getCached('/en/graphql/reference/other')
+      const res = await getCached('/en/graphql/reference/scalars')
       expect(res.statusCode).toBe(200)
 
-      // Built-in scalars are uncategorized and end up in "other"
-      expect(res.body).toContain('## Boolean - scalar')
+      // Check for scalar heading
+      expect(res.body).toContain('## Boolean')
+
+      // Check for scalar description
       expect(res.body).toContain('Represents true or false values.')
-      expect(res.body).toContain('## String - scalar')
-      expect(res.body).toContain('## ID - scalar')
-      expect(res.body).toContain('## Int - scalar')
+
+      // Check for other scalars
+      expect(res.body).toContain('## String')
+      expect(res.body).toContain('## ID')
+      expect(res.body).toContain('## Int')
     })
 
     test('reference index page renders', async () => {
@@ -286,10 +338,11 @@ describe('GraphQL transformer', { timeout: 10000 }, () => {
 
   describe('Liquid tags', () => {
     test('AUTOTITLE links are resolved in manual content', async () => {
-      // The repos category page renders the manual content section of its
-      // landing markdown, including AUTOTITLE links if present.
-      const res = await getCached('/en/graphql/reference/repos')
+      const res = await getCached('/en/graphql/reference/queries')
       expect(res.statusCode).toBe(200)
+
+      // Check that AUTOTITLE has been resolved
+      expect(res.body).toMatch(/(Forming calls with GraphQL|Hello World)/)
 
       // Make sure the raw AUTOTITLE tag is not present
       expect(res.body).not.toContain('[AUTOTITLE]')
@@ -315,31 +368,31 @@ describe('GraphQL transformer', { timeout: 10000 }, () => {
   })
 
   describe('Multiple items', () => {
-    test('multiple queries are all rendered on a category page', async () => {
-      const res = await getCached('/en/graphql/reference/repos')
+    test('multiple queries are all rendered', async () => {
+      const res = await getCached('/en/graphql/reference/queries')
       expect(res.statusCode).toBe(200)
 
-      // Multiple repos-category queries appear as level 3 headings
-      expect(res.body).toContain('## repository - query')
-      expect(res.body).toContain('## repositoryOwner - query')
+      // Check for multiple query headings
+      expect(res.body).toContain('## repository')
+      expect(res.body).toContain('## viewer')
     })
 
-    test('multiple objects are all rendered on a category page', async () => {
-      const res = await getCached('/en/graphql/reference/repos')
+    test('multiple objects are all rendered', async () => {
+      const res = await getCached('/en/graphql/reference/objects')
       expect(res.statusCode).toBe(200)
 
-      // Repos-category object headings
-      expect(res.body).toContain('## Language - object')
-      expect(res.body).toContain('## ContributingGuidelines - object')
+      // Check for multiple object headings
+      expect(res.body).toContain('## Repository')
+      expect(res.body).toContain('## User')
     })
 
-    test('multiple enums are all rendered on a category page', async () => {
-      const res = await getCached('/en/graphql/reference/repos')
+    test('multiple enums are all rendered', async () => {
+      const res = await getCached('/en/graphql/reference/enums')
       expect(res.statusCode).toBe(200)
 
-      // Repos-category enum headings
-      expect(res.body).toContain('## RepositoryVisibility - enum')
-      expect(res.body).toContain('## CollaboratorAffiliation - enum')
+      // Check for multiple enum headings
+      expect(res.body).toContain('## RepositoryVisibility')
+      expect(res.body).toContain('## OrderDirection')
     })
   })
 })

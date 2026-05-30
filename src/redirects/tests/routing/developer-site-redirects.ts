@@ -53,12 +53,12 @@ describe('developer redirects', () => {
     test('graphql reference paths with child pages', async () => {
       const sclarRes = await get('/en/v4/scalar/boolean')
       expect(sclarRes.statusCode).toBe(301)
-      const sclarResFinalPath = '/en/graphql/reference/other#scalar-boolean'
+      const sclarResFinalPath = '/en/graphql/reference/scalars#boolean'
       expect(sclarRes.headers.location).toBe(sclarResFinalPath)
 
       const enumRes = await get('/en/v4/enum/searchtype')
       expect(enumRes.statusCode).toBe(301)
-      const enumResFinalPath = '/en/graphql/reference/search#enum-searchtype'
+      const enumResFinalPath = '/en/graphql/reference/enums#searchtype'
       expect(enumRes.headers.location).toBe(enumResFinalPath)
     })
   })

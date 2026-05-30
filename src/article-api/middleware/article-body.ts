@@ -7,7 +7,6 @@ import features from '@/versions/middleware/features'
 import glossaries from '@/frame/middleware/context/glossaries'
 import dataTables from '@/data-directory/middleware/data-tables'
 import { transformerRegistry } from '@/article-api/transformers'
-import { normalizeRenderedMarkdown } from '@/article-api/lib/normalize-markdown'
 import { allVersions } from '@/versions/lib/all-versions'
 import type { Page } from '@/types'
 
@@ -73,7 +72,5 @@ export async function getArticleBody(req: ExtendedRequestWithPageInfo) {
     effectiveApiVersion = allVersions[currentVersion].latestApiVersion || undefined
   }
 
-  return normalizeRenderedMarkdown(
-    await transformer.transform(page, pathname, renderingReq.context, effectiveApiVersion),
-  )
+  return await transformer.transform(page, pathname, renderingReq.context, effectiveApiVersion)
 }

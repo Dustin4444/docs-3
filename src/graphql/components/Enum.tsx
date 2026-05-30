@@ -4,15 +4,14 @@ import type { EnumT } from './types'
 
 type Props = {
   item: EnumT
-  headingLevel?: number
 }
 
-export function Enum({ item, headingLevel = 2 }: Props) {
+export function Enum({ item }: Props) {
   const { t } = useTranslation('graphql')
   const heading = t('reference.values').replace('{{ GraphQLItemTitle }}', item.name)
 
   return (
-    <GraphqlItem item={item} heading={heading} headingLevel={headingLevel} kind="enums">
+    <GraphqlItem item={item} heading={heading}>
       <table className="fields width-full table-fixed">
         <thead>
           <tr>

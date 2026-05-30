@@ -4,9 +4,17 @@
 
 {{ manualContent }}
 
+{% if connectionEdgeSummary %}
+## Connection and Edge types
+
+Connection types with only the standard pagination fields (`edges`, `nodes`, `pageInfo`, `totalCount`) and Edge types with only `cursor` and `node` are summarized here. Connection and Edge types with additional fields are documented individually below.
+
+{% for name in connectionEdgeSummary %}`{{ name }}`{% unless forloop.last %}, {% endunless %}{% endfor %}
+
+{% endif %}
 {% for item in items %}
 
-## {{ item.name }} - {{ item.kindLabel }}
+## {{ item.name }}
 
 {{ item.description }}
 
@@ -16,7 +24,7 @@
 > **Deprecation notice:** {{ item.deprecationReason }}
 {% endif %}
 
-{% if item.kind == 'queries' %}
+{% if pageType == 'queries' %}
 **Type:** {{ item.type }}
 
 {% if item.args.size > 0 %}
@@ -27,7 +35,7 @@
 {% endfor %}
 {% endif %}
 
-{% elsif item.kind == 'mutations' %}
+{% elsif pageType == 'mutations' %}
 {% if item.inputFields.size > 0 %}
 
 ### Input fields for `{{ item.name }}`
@@ -44,7 +52,7 @@
 {% endfor %}
 {% endif %}
 
-{% elsif item.kind == 'objects' %}
+{% elsif pageType == 'objects' %}
 {% if item.implements.size > 0 %}
 **Implements:** {% for impl in item.implements %}{{ impl.name }}{% unless forloop.last %}, {% endunless %}{% endfor %}
 
@@ -60,7 +68,7 @@
 {% endfor %}
 {% endif %}
 
-{% elsif item.kind == 'interfaces' %}
+{% elsif pageType == 'interfaces' %}
 {% if item.fields.size > 0 %}
 
 ### Fields for `{{ item.name }}`
@@ -71,15 +79,7 @@
 {% endfor %}
 {% endif %}
 
-{% if item.implementedBy.size > 0 %}
-
-### Implemented by
-
-{% for impl in item.implementedBy %}* {{ impl.name }}
-{% endfor %}
-{% endif %}
-
-{% elsif item.kind == 'enums' %}
+{% elsif pageType == 'enums' %}
 {% if item.values.size > 0 %}
 
 ### Values for `{{ item.name }}`
@@ -88,7 +88,7 @@
 {% endfor %}
 {% endif %}
 
-{% elsif item.kind == 'unions' %}
+{% elsif pageType == 'unions' %}
 {% if item.possibleTypes.size > 0 %}
 
 ### Possible types for `{{ item.name }}`
@@ -97,7 +97,7 @@
 {% endfor %}
 {% endif %}
 
-{% elsif item.kind == 'inputObjects' %}
+{% elsif pageType == 'inputObjects' %}
 {% if item.inputFields.size > 0 %}
 
 ### Input fields for `{{ item.name }}`
@@ -106,7 +106,7 @@
 {% endfor %}
 {% endif %}
 
-{% elsif item.kind == 'scalars' %}
+{% elsif pageType == 'scalars' %}
 {%- comment -%}Scalars typically just have name and description{%- endcomment -%}
 
 {% endif %}

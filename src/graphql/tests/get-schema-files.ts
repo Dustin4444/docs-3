@@ -3,7 +3,6 @@ import { readFileSync } from 'fs'
 import { describe, expect, test } from 'vitest'
 
 import { allVersions } from '@/versions/lib/all-versions'
-import { CATEGORIES } from '../lib/categories'
 import {
   getGraphqlSchema,
   getGraphqlChangelog,
@@ -21,24 +20,12 @@ describe('graphql schema', () => {
     JSON.parse(readFileSync('src/graphql/lib/types.json', 'utf-8')) as GraphqlType[]
   ).map((item) => item.kind)
   for (const version in allVersions) {
-    for (const category of CATEGORIES) {
-      test(`getting the GraphQL ${category} schema works for ${version}`, async () => {
-        const schema = getGraphqlSchema(version, category) as Record<string, unknown>
+    for (const type of graphqlTypes) {
+      test(`getting the GraphQL ${type} schema works for ${version}`, async () => {
+        const schema = getGraphqlSchema(version, type)
         expect(schema).toBeDefined()
       })
     }
-    test(`every kind has at least one item across categories for ${version}`, async () => {
-      const seenKinds = new Set<string>()
-      for (const category of CATEGORIES) {
-        const bucket = getGraphqlSchema(version, category) as Record<string, unknown[] | undefined>
-        for (const kind of graphqlTypes) {
-          if ((bucket[kind]?.length ?? 0) > 0) seenKinds.add(kind)
-        }
-      }
-      for (const kind of graphqlTypes) {
-        expect(seenKinds, `kind missing across all categories: ${kind}`).toContain(kind)
-      }
-    })
   }
 
   test('getting the graphql changelog works for dotcom', async () => {

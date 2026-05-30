@@ -1,37 +1,39 @@
 import { Link } from '@/frame/components/Link'
-import { GraphqlItem, headingTag } from './GraphqlItem'
+import { GraphqlItem } from './GraphqlItem'
 import { Table } from './Table'
 import { useTranslation } from '@/languages/components/useTranslation'
 import type { QueryT } from './types'
 
 type Props = {
   item: QueryT
-  headingLevel?: number
 }
 
-export function Query({ item, headingLevel = 2 }: Props) {
+export function Query({ item }: Props) {
   const { t } = useTranslation('graphql')
-  const SubHeading = headingTag(headingLevel + 1)
 
   return (
-    <GraphqlItem item={item} headingLevel={headingLevel} kind="queries">
-      <p>
-        <b>{t('graphql.reference.type')}: </b>
-        <Link href={item.href} makeAbsolute>
-          {item.type}
-        </Link>
-      </p>
+    <GraphqlItem item={item} headingLevel={3}>
+      <div>
+        <p>
+          <b>{t('graphql.reference.type')}: </b>
+          <Link href={item.href} makeAbsolute>
+            {item.type}
+          </Link>
+        </p>
+      </div>
 
-      {item.args.length > 0 && (
-        <>
-          <SubHeading
-            dangerouslySetInnerHTML={{
-              __html: t('reference.arguments').replace('{{ GraphQLItemTitle }}', item.name),
-            }}
-          />
-          <Table fields={item.args} />
-        </>
-      )}
+      <div>
+        {item.args.length > 0 && (
+          <>
+            <h4
+              dangerouslySetInnerHTML={{
+                __html: t('reference.arguments').replace('{{ GraphQLItemTitle }}', item.name),
+              }}
+            />
+            <Table fields={item.args} />
+          </>
+        )}
+      </div>
     </GraphqlItem>
   )
 }

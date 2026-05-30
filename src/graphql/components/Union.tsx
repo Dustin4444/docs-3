@@ -5,15 +5,14 @@ import type { UnionT } from './types'
 
 type Props = {
   item: UnionT
-  headingLevel?: number
 }
 
-export function Union({ item, headingLevel = 2 }: Props) {
+export function Union({ item }: Props) {
   const { t } = useTranslation('graphql')
   const heading = t('reference.possible_types').replace('{{ GraphQLItemTitle }}', item.name)
 
   return (
-    <GraphqlItem item={item} heading={heading} headingLevel={headingLevel} kind="unions">
+    <GraphqlItem item={item} heading={heading}>
       <ul>
         {item.possibleTypes.map((type) => (
           <li key={type.id}>
